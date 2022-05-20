@@ -13,12 +13,102 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 
 public class FXMLController implements Initializable {
+    @FXML
+    private Button addButton;
 
+    @FXML
+    private Label nameLabel;
+
+    @FXML
+    private Button nextButton;
+
+    @FXML
+    private Button pauseButton;
+
+    @FXML
+    private Button playButton;
+
+    @FXML
+    private Button playlistButton;
+
+    @FXML
+    private ListView<?> playlistsListView;
+
+    @FXML
+    private Button shareButton;
+
+    @FXML
+    private Button songButton;
+
+    @FXML
+    private Label songLabel;
+
+    @FXML
+    private ProgressBar songProgressBar;
+
+    @FXML
+    private ListView<?> songsListView;
+
+    @FXML
+    private Slider volumeSlider;
+    private Media media;
+    private MediaPlayer mediaPlayer;
+    private File[] files;
+    private File directory;
+    private ArrayList<File> songs;
+    private int songNumber;
+    private Timer timer;
+    private TimerTask task;
+    private boolean running;
+
+    public void playMedia(ActionEvent actionEvent) {
+        mediaPlayer.play();
+    }
+
+    public void nextMedia(ActionEvent actionEvent) {
+    }
+
+    public void pauseMedia(ActionEvent actionEvent) {
+    }
+
+    public void addMediaToPlaylist(ActionEvent actionEvent) {
+    }
+
+    public void shareMedia(ActionEvent actionEvent) {
+    }
+
+    public void chooseSong(ActionEvent actionEvent) {
+    }
+
+    public void choosePlaylist(ActionEvent actionEvent) {
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        songs = new ArrayList<File>();
+        directory = new File("C:\\Users\\MargoRitta\\IdeaProjects\\MediaPlayer\\src\\music");
+        files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                songs.add(file);
+                System.out.println(file);
+            }
+
+        }
+        media = new Media(songs.get(songNumber).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        songLabel.setText(songs.get(songNumber).getName());
+
+    }
+}
+
+/*
 
     @FXML
     private ResourceBundle resources;
@@ -182,7 +272,11 @@ public class FXMLController implements Initializable {
         }
 
 
+    public void shareMedia(ActionEvent actionEvent) {
+    }
 
-
-
+    public void addMediaToPlaylist(ActionEvent actionEvent) {
+    }
 }
+*/
+
