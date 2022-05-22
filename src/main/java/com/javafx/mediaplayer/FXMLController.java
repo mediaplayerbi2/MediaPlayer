@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.control.ProgressBar;
 
 
 public class FXMLController implements Initializable {
@@ -48,6 +49,8 @@ public class FXMLController implements Initializable {
 
     @FXML
     private Label songLabel;
+    @FXML
+    private Label timeLabel;
 
     @FXML
     private ProgressBar songProgressBar;
@@ -69,12 +72,42 @@ public class FXMLController implements Initializable {
 
     public void playMedia(ActionEvent actionEvent) {
         mediaPlayer.play();
+        beginTimer();
     }
 
     public void nextMedia(ActionEvent actionEvent) {
+        if (songNumber < songs.size() - 1) {
+            songNumber++;
+            mediaPlayer.stop();
+            if(running){
+                cancelTimer();
+            }
+
+
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+        } else {
+            songNumber = 0;
+            mediaPlayer.stop();
+            if(running){
+                cancelTimer();
+            }
+
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+
+
+
+        }
+        mediaPlayer.play();
     }
 
+
     public void pauseMedia(ActionEvent actionEvent) {
+        cancelTimer();
+        mediaPlayer.pause();
     }
 
     public void addMediaToPlaylist(ActionEvent actionEvent) {
@@ -88,6 +121,30 @@ public class FXMLController implements Initializable {
 
     public void choosePlaylist(ActionEvent actionEvent) {
     }
+    /*public void beginTimer(){
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                running = true;
+                double current = mediaPlayer.getCurrentTime().toSeconds();
+                double end = media.getDuration().toSeconds();
+                System.out.println(current/end);
+                songProgressBar.setProgress(current/end);
+                if (current/end == 1){
+                    cancelTimer();
+                }
+
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0,100);
+    }
+
+    public void cancelTimer(){
+        running = false;
+        timer.cancel();
+
+    }*/
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -104,9 +161,71 @@ public class FXMLController implements Initializable {
         media = new Media(songs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         songLabel.setText(songs.get(songNumber).getName());
+        volumeSlider.valueProperty().addListener(new ChangeListener<Number>(){
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
+            }
+        });
+        songProgressBar.setStyle("-fx-accent: #332c54;");
+    }
+
+    public void previousMedia(ActionEvent actionEvent) {
+        if (songNumber > 0 ) {
+            songNumber--;
+            mediaPlayer.stop();
+            if(running){
+                cancelTimer();
+            }
+
+
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+        } else {
+            songNumber = songs.size() - 1;
+            mediaPlayer.stop();
+            if(running){
+                cancelTimer();
+            }
+
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+
+
+        }
+        mediaPlayer.play();
+    }
+    public void beginTimer(){
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                running = true;
+                double current = mediaPlayer.getCurrentTime().toSeconds();
+                double end = media.getDuration().toSeconds();
+                System.out.println(current/end);
+                songProgressBar.setProgress(current/end);
+                if (current/end == 1){
+                    cancelTimer();
+                }
+
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0,100);
+    }
+
+    public void cancelTimer(){
+        running = false;
+        timer.cancel();
 
     }
 }
+
+
+
+
 
 /*
 
