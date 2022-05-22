@@ -91,12 +91,13 @@ public class FXMLController implements Initializable {
             songNumber = 0;
             mediaPlayer.stop();
             if(running){
-                cancelTimer();
+                beginTimer();
             }
 
             media = new Media(songs.get(songNumber).toURI().toString());
             mediaPlayer = new MediaPlayer(media);
             songLabel.setText(songs.get(songNumber).getName());
+
 
 
 
@@ -121,30 +122,6 @@ public class FXMLController implements Initializable {
 
     public void choosePlaylist(ActionEvent actionEvent) {
     }
-    /*public void beginTimer(){
-        timer = new Timer();
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                running = true;
-                double current = mediaPlayer.getCurrentTime().toSeconds();
-                double end = media.getDuration().toSeconds();
-                System.out.println(current/end);
-                songProgressBar.setProgress(current/end);
-                if (current/end == 1){
-                    cancelTimer();
-                }
-
-            }
-        };
-        timer.scheduleAtFixedRate(task, 0,100);
-    }
-
-    public void cancelTimer(){
-        running = false;
-        timer.cancel();
-
-    }*/
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -161,6 +138,7 @@ public class FXMLController implements Initializable {
         media = new Media(songs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         songLabel.setText(songs.get(songNumber).getName());
+        songsListView.getItems().addAll();
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>(){
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
@@ -186,7 +164,7 @@ public class FXMLController implements Initializable {
             songNumber = songs.size() - 1;
             mediaPlayer.stop();
             if(running){
-                cancelTimer();
+                beginTimer();
             }
 
             media = new Media(songs.get(songNumber).toURI().toString());
