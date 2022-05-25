@@ -49,6 +49,22 @@
             <artifactId>ikonli-material-pack</artifactId>
             <version>12.3.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>17-ea+2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>17.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.komponents.progress</groupId>
+            <artifactId>progress</artifactId>
+            <version>1.0.3</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
