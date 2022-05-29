@@ -1,7 +1,6 @@
 package com.javafx.mediaplayer;
 
-import java.io.File;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -10,13 +9,34 @@ import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+
+
+
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.control.ProgressBar;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.List;
+
 
 
 public class FXMLController implements Initializable {
@@ -53,7 +73,7 @@ public class FXMLController implements Initializable {
     private Label timeLabel;
 
     @FXML
-    private ProgressBar songProgressBar;
+    private Slider progressBar;
 
     @FXML
     private ListView<?> songsListView;
@@ -70,17 +90,60 @@ public class FXMLController implements Initializable {
     private TimerTask task;
     private boolean running;
 
+
     public void playMedia(ActionEvent actionEvent) {
         mediaPlayer.play();
-        beginTimer();
+        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        mediaPlayer.setOnReady(new Runnable() {
+            @Override
+            public void run() {
+                javafx.util.Duration total = media.getDuration();
+                progressBar.setMax(total.toSeconds());
+            }
+        });
+        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
+                                                          @Override
+                                                          public void changed(ObservableValue<? extends javafx.util.Duration> observable, javafx.util.Duration oldValue, javafx.util.Duration newValue) {
+                                                              progressBar.setValue(newValue.toSeconds());
+                                                          }
+                                                      }
+        );
+
+        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
     }
 
     public void nextMedia(ActionEvent actionEvent) {
         if (songNumber < songs.size() - 1) {
             songNumber++;
             mediaPlayer.stop();
-            if(running){
-                cancelTimer();
+            if (running) {
+                ;
             }
 
 
@@ -90,24 +153,62 @@ public class FXMLController implements Initializable {
         } else {
             songNumber = 0;
             mediaPlayer.stop();
-            if(running){
-                beginTimer();
-            }
-
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-
-
-
 
         }
+
+        media = new Media(songs.get(songNumber).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        songLabel.setText(songs.get(songNumber).getName());
+
+
         mediaPlayer.play();
+        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        mediaPlayer.setOnReady(new Runnable() {
+            @Override
+            public void run() {
+                javafx.util.Duration total = media.getDuration();
+                progressBar.setMax(total.toSeconds());
+            }
+        });
+        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
+                                                          @Override
+                                                          public void changed(ObservableValue<? extends javafx.util.Duration> observable, javafx.util.Duration oldValue, javafx.util.Duration newValue) {
+                                                              progressBar.setValue(newValue.toSeconds());
+                                                          }
+                                                      }
+        );
+
+        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
     }
 
 
     public void pauseMedia(ActionEvent actionEvent) {
-        cancelTimer();
         mediaPlayer.pause();
     }
 
@@ -126,7 +227,7 @@ public class FXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         songs = new ArrayList<File>();
-        directory = new File("C:\\Users\\MargoRitta\\IdeaProjects\\MediaPlayer\\src\\music");
+        directory = new File("C:\\Users\\MargoRitta\\IdeaProjects\\MediaPlayer1\\src\\music");
         files = directory.listFiles();
         if (files != null) {
             for (File file : files) {
@@ -139,241 +240,82 @@ public class FXMLController implements Initializable {
         mediaPlayer = new MediaPlayer(media);
         songLabel.setText(songs.get(songNumber).getName());
         songsListView.getItems().addAll();
-        volumeSlider.valueProperty().addListener(new ChangeListener<Number>(){
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
-            }
-        });
-        songProgressBar.setStyle("-fx-accent: #332c54;");
-    }
-
-    public void previousMedia(ActionEvent actionEvent) {
-        if (songNumber > 0 ) {
-            songNumber--;
-            mediaPlayer.stop();
-            if(running){
-                cancelTimer();
-            }
-
-
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-        } else {
-            songNumber = songs.size() - 1;
-            mediaPlayer.stop();
-            if(running){
-                beginTimer();
-            }
-
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-
-
-        }
-        mediaPlayer.play();
-    }
-    public void beginTimer(){
-        timer = new Timer();
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                running = true;
-                double current = mediaPlayer.getCurrentTime().toSeconds();
-                double end = media.getDuration().toSeconds();
-                System.out.println(current/end);
-                songProgressBar.setProgress(current/end);
-                if (current/end == 1){
-                    cancelTimer();
-                }
-
-            }
-        };
-        timer.scheduleAtFixedRate(task, 0,100);
-    }
-
-    public void cancelTimer(){
-        running = false;
-        timer.cancel();
-
-    }
-}
-
-
-
-
-
-/*
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
-
-    @FXML
-    private ListView<?> ListView;
-
-    @FXML
-    private Button nextButton;
-
-    @FXML
-    private Button pauseButton;
-
-    @FXML
-    private Button playButton;
-
-    @FXML
-    private Button previousButton;
-
-    @FXML
-    private ProgressBar songProgressBar;
-
-    @FXML
-    private ComboBox<String> speedBox;
-
-    @FXML
-    private Slider volumeSlider;
-    @FXML
-    private Label songLabel;
-
-    private Media media;
-    private MediaPlayer mediaPlayer;
-    private File[] files;
-    private File directory;
-    private ArrayList<File> songs;
-    private int songNumber;
-    private Timer timer;
-    private TimerTask task;
-    private boolean running;
-
-    @FXML
-    void initialize() {
-
-
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        songs = new ArrayList<File>();
-        directory = new File("C:\\Users\\MargoRitta\\IdeaProjects\\MediaPlayer\\src\\music");
-        files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                songs.add(file);
-                System.out.println(file);
-            }
-        }
-        media = new Media(songs.get(songNumber).toURI().toString());
-        mediaPlayer = new MediaPlayer(media);
-        songLabel.setText(songs.get(songNumber).getName());
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                 mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
             }
         });
-
-    }
-
-    public void previosMedia(ActionEvent actionEvent) {
-        if (songNumber > 0 ) {
-            songNumber--;
-            mediaPlayer.stop();
-            if(running){
-                cancelTimer();
-            }
-
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-        } else {
-            songNumber = songs.size() - 1;
-            mediaPlayer.stop();
-            if(running){
-                cancelTimer();
-            }
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-
-
-        }
-        mediaPlayer.play();
-
-    }
-
-    public void playMedia(ActionEvent actionEvent) {
-        beginTimer();
-        mediaPlayer.play();
-    }
-
-    public void nextMedia(ActionEvent actionEvent) {
-        if (songNumber < songs.size() - 1) {
-            songNumber++;
-            mediaPlayer.stop();
-            if(running){
-                cancelTimer();
-            }
-
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-        } else {
-            songNumber = 0;
-            mediaPlayer.stop();
-            if(running){
-                cancelTimer();
-            }
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-
-
-        }
-        mediaPlayer.play();
     }
 
 
 
-    public void pauseMedia(ActionEvent actionEvent) {
-        cancelTimer();
-        mediaPlayer.pause();
-    }
-    public void beginTimer() {
-        timer = new Timer();
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                running = true;
-                double current = mediaPlayer.getCurrentTime().toSeconds();
-                double end = media.getDuration().toSeconds();
-                System.out.println(current / end);
-                songProgressBar.setProgress(current / end);
-                if (current / end == 1) {
-                    cancelTimer();
+
+    public void previousMedia(ActionEvent actionEvent) {
+
+
+
+
+
+
+
+                if (songNumber > 0) {
+                    songNumber--;
+                    mediaPlayer.stop();
+
+                    media = new Media(songs.get(songNumber).toURI().toString());
+                    mediaPlayer = new MediaPlayer(media);
+                    songLabel.setText(songs.get(songNumber).getName());
+
+
                 }
-                timer.scheduleAtFixedRate(task, 1000, 1000);
+                mediaPlayer.play();
+                progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+                    }
+                });
+
+                progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+                    }
+                });
+
+                mediaPlayer.setOnReady(new Runnable() {
+                    @Override
+                    public void run() {
+                        javafx.util.Duration total = media.getDuration();
+                        progressBar.setMax(total.toSeconds());
+                    }
+                });
+                mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
+                                                                  @Override
+                                                                  public void changed(ObservableValue<? extends javafx.util.Duration> observable, javafx.util.Duration oldValue, javafx.util.Duration newValue) {
+                                                                      progressBar.setValue(newValue.toSeconds());
+                                                                  }
+                                                              }
+                );
+
+                progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+                    }
+                });
+
+                progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+                    }
+                });
+
             }
-
-
-        };
-    }
-
-        public void cancelTimer() {
-            running = false;
-            timer.cancel();
         }
 
 
-    public void shareMedia(ActionEvent actionEvent) {
-    }
 
-    public void addMediaToPlaylist(ActionEvent actionEvent) {
-    }
-}
-*/
 
