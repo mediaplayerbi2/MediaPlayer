@@ -37,8 +37,6 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.List;
 
-
-
 public class FXMLController implements Initializable {
     @FXML
     private Button addButton;
@@ -92,6 +90,7 @@ public class FXMLController implements Initializable {
 
 
     public void playMedia(ActionEvent actionEvent) {
+        mediaPlayer.stop();
         media = new Media(songs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         songLabel.setText(songs.get(songNumber).getName());
@@ -302,6 +301,7 @@ public class FXMLController implements Initializable {
 
             }
         }
+
 
 
 
