@@ -92,6 +92,9 @@ public class FXMLController implements Initializable {
 
 
     public void playMedia(ActionEvent actionEvent) {
+        media = new Media(songs.get(songNumber).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        songLabel.setText(songs.get(songNumber).getName());
         mediaPlayer.play();
         progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -100,6 +103,13 @@ public class FXMLController implements Initializable {
             }
         });
 
+        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
+            @Override
+            public void changed(ObservableValue<? extends javafx.util.Duration> observable,
+                                javafx.util.Duration oldValue, javafx.util.Duration newValue) {
+                progressBar.setValue(newValue.toSeconds());
+            }
+        });
         progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -114,13 +124,6 @@ public class FXMLController implements Initializable {
                 progressBar.setMax(total.toSeconds());
             }
         });
-        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
-                                                          @Override
-                                                          public void changed(ObservableValue<? extends javafx.util.Duration> observable, javafx.util.Duration oldValue, javafx.util.Duration newValue) {
-                                                              progressBar.setValue(newValue.toSeconds());
-                                                          }
-                                                      }
-        );
 
         progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -150,13 +153,10 @@ public class FXMLController implements Initializable {
         } else {
             songNumber = 0;
             mediaPlayer.stop();
-
         }
-
         media = new Media(songs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         songLabel.setText(songs.get(songNumber).getName());
-
 
         mediaPlayer.play();
         progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -181,12 +181,12 @@ public class FXMLController implements Initializable {
             }
         });
         mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
-                                                          @Override
-                                                          public void changed(ObservableValue<? extends javafx.util.Duration> observable, javafx.util.Duration oldValue, javafx.util.Duration newValue) {
-                                                              progressBar.setValue(newValue.toSeconds());
-                                                          }
-                                                      }
-        );
+            @Override
+            public void changed(ObservableValue<? extends javafx.util.Duration> observable,
+                                javafx.util.Duration oldValue, javafx.util.Duration newValue) {
+                progressBar.setValue(newValue.toSeconds());
+            }
+        });
 
         progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -201,7 +201,6 @@ public class FXMLController implements Initializable {
                 mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
             }
         });
-
     }
 
 
@@ -239,23 +238,14 @@ public class FXMLController implements Initializable {
         songsListView.getItems().addAll();
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+            public void changed(ObservableValue<? extends Number> observableValue, Number number,
+                                Number t1) {
                 mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
             }
         });
     }
 
-
-
-
     public void previousMedia(ActionEvent actionEvent) {
-
-
-
-
-
-
-
                 if (songNumber > 0) {
                     songNumber--;
                     mediaPlayer.stop();
