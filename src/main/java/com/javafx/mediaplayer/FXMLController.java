@@ -237,6 +237,25 @@ public class FXMLController implements Initializable {
         songLabel.setText(songs.get(songNumber).getName());
         ObservableList<String> observableList = FXCollections.observableList(songNames);
         songsListView.setItems(observableList);
+        songsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                mediaPlayer.stop();
+                File[] listOfFiles = directory.listFiles();
+                int i;
+                for (i = 0; i < listOfFiles.length; i++) {
+                    if (listOfFiles[i].toString().equals(directory.toString() + "\\" +
+                            songsListView.getSelectionModel().getSelectedItem().toString())) {
+                        break;
+                    }
+                }
+                media = new Media(listOfFiles[i].toURI().toString());
+                mediaPlayer = new MediaPlayer(media);
+
+                songLabel.setText(listOfFiles[i].getName());
+                mediaPlayer.play();
+            }
+        });
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number,
