@@ -1,40 +1,28 @@
 package com.javafx.mediaplayer;
 
 
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
-import javafx.stage.FileChooser;
+import javafx.scene.input.DragEvent;
 
 
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.util.List;
 
 public class FXMLController implements Initializable {
     @FXML
@@ -73,10 +61,20 @@ public class FXMLController implements Initializable {
     private Slider progressBar;
 
     @FXML
-    private ListView<?> songsListView;
+    private ListView<String> songsListView;
 
     @FXML
     private Slider volumeSlider;
+
+    @FXML
+    private void handleDrop(DragEvent event) throws FileNotFoundException {
+        List<File> files = event.getDragboard().getFiles();
+        System.out.println(files);
+        // if (acceptedExtensions.contains(extension)) {
+        //     Media media = new Media(file.toURI().toString());
+        //     audioMediaView.setMediaPlayer(new MediaPlayer(media));
+        // }
+    }
     private Media media;
     private MediaPlayer mediaPlayer;
     private File[] files;
@@ -223,17 +221,22 @@ public class FXMLController implements Initializable {
         songs = new ArrayList<File>();
         directory = new File("src/music");
         files = directory.listFiles();
+        List<String> songNames = new ArrayList<String>();
         if (files != null) {
             for (File file : files) {
                 songs.add(file);
+                if (file.isFile()) {
+                    songNames.add(file.getName());
+                }
                 System.out.println(file);
             }
-
         }
         media = new Media(songs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
+
         songLabel.setText(songs.get(songNumber).getName());
-        songsListView.getItems().addAll();
+        ObservableList<String> observableList = FXCollections.observableList(songNames);
+        songsListView.setItems(observableList);
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number,

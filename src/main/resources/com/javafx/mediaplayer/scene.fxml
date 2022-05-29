@@ -63,11 +63,6 @@
             <Font name="System Bold" size="23.0" />
          </font>
       </Label>
-      <ListView fx:id="songsListView" layoutX="173.0" layoutY="-2.0" prefHeight="366.0" prefWidth="588.0" style="-fx-background-color: #222020;" />
-      <Button fx:id="songButton" alignment="CENTER" layoutX="173.0" layoutY="8.0" mnemonicParsing="false" onAction="#chooseSong" prefHeight="30.0" prefWidth="588.0" style="-fx-background-color: #222020; -fx-border-color: #171414;" text="Song1" textFill="#ddd6d6">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Button>
+      <ListView fx:id="songsListView" layoutX="173.0" layoutY="-2.0" onDragOver="#handleDrop" prefHeight="366.0" prefWidth="588.0" style="-fx-background-color: #222020;" />
    </children>
 </AnchorPane>
