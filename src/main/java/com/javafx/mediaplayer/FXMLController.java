@@ -142,9 +142,6 @@ public class FXMLController implements Initializable {
         if (songNumber < songs.size() - 1) {
             songNumber++;
             mediaPlayer.stop();
-            if (running) {
-                ;
-            }
 
 
             media = new Media(songs.get(songNumber).toURI().toString());
@@ -227,7 +224,7 @@ public class FXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         songs = new ArrayList<File>();
-        directory = new File("C:\\Users\\MargoRitta\\IdeaProjects\\MediaPlayer1\\src\\music");
+        directory = new File("src/music");
         files = directory.listFiles();
         if (files != null) {
             for (File file : files) {
