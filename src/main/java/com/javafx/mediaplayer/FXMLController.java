@@ -69,7 +69,23 @@ public class FXMLController implements Initializable {
     @FXML
     private void handleDrop(DragEvent event) throws FileNotFoundException {
         List<File> files = event.getDragboard().getFiles();
-        System.out.println(files);
+        List<String> fileString = new ArrayList<String>();
+        for (int i = 0; i < files.size(); i++){
+            String[] temp = files.get(i).toString().split("\\\\");
+            List<String> al = new ArrayList<String>();
+            al = Arrays.asList(temp);
+            fileString.add(al.get(al.size() - 1));
+        }
+        ObservableList<String> observableList = FXCollections.observableList(fileString);
+        songsListView.setItems(observableList);
+        if (observableList.size() > 0) {
+            mediaPlayer.stop();
+            media = new Media(files.get(0).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+            songNumber = files.size();
+            mediaPlayer.play();
+        }
         // if (acceptedExtensions.contains(extension)) {
         //     Media media = new Media(file.toURI().toString());
         //     audioMediaView.setMediaPlayer(new MediaPlayer(media));
