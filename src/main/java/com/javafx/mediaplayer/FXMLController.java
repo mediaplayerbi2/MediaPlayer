@@ -350,6 +350,12 @@ public class FXMLController implements Initializable {
                 // songLabel.setText(listOfFiles[i].getName());
                 // mediaPlayer.play();
                 songNumber = i;
+                if (isPlaying) mediaPlayer.stop();
+                media = new Media(curSongs.get(songNumber).toURI().toString());
+                mediaPlayer = new MediaPlayer(media);
+                songLabel.setText(curSongs.get(songNumber).getName());
+                mediaPlayer.play();
+                isPlaying = true;
             }
         });
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
