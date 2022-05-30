@@ -78,6 +78,7 @@ public class FXMLController implements Initializable {
     }
 
     private ArrayList<File> curSongs;
+    private boolean isPlaying;
     @FXML
     private void handleDrop(DragEvent event) throws FileNotFoundException {
         List<File> files = event.getDragboard().getFiles();
@@ -152,10 +153,13 @@ public class FXMLController implements Initializable {
     }
 
     public void playMedia(ActionEvent actionEvent) {
+        if (isPlaying) mediaPlayer.stop();
+        isPlaying = false;
         media = new Media(curSongs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         songLabel.setText(curSongs.get(songNumber).getName());
         mediaPlayer.play();
+        isPlaying = true;
         progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -202,24 +206,19 @@ public class FXMLController implements Initializable {
     }
 
     public void nextMedia(ActionEvent actionEvent) {
-        System.out.println(songNumber);
-        System.out.println(curSongs.size());
-        if (songNumber < curSongs.size() - 1) {
+        if (isPlaying) mediaPlayer.stop();
+        isPlaying = false;
+        if (songNumber < curSongs.size() - 2) {
             songNumber++;
-            mediaPlayer.stop();
-
-            media = new Media(curSongs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(curSongs.get(songNumber).getName());
         } else {
             songNumber = 0;
-            mediaPlayer.stop();
         }
         media = new Media(curSongs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         songLabel.setText(curSongs.get(songNumber).getName());
 
         mediaPlayer.play();
+        isPlaying = true;
         progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -332,23 +331,25 @@ public class FXMLController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 // mediaPlayer.stop();
-                File[] listOfFiles = new File[songs.length];
-                for (int i = 0; i < songs.length; i++) {
-                    listOfFiles[i] = new File(songs[i]);
-                }
+                // File[] listOfFiles = new File[curSongs.size()];
+                // for (int i = 0; i < songs.length; i++) {
+                //     listOfFiles[i] = new File(curSongs.get(i).toString());
+                // }
 
+                String selectedSong = songsListView.getSelectionModel().getSelectedItem();
                 int i;
-                for (i = 0; i < listOfFiles.length; i++) {
-                    if (listOfFiles[i].toString().equals(directory.toString() + "\\" +
-                            songsListView.getSelectionModel().getSelectedItem().toString())) {
+                for (i = 0; i < curSongs.size() - 1; i++) {
+                    String[] temp = curSongs.get(i).toString().split("\\\\");
+                    if (temp[temp.length-1].equals(selectedSong)) {
                         break;
                     }
                 }
-                // media = new Media(listOfFiles[i].toURI().toString());
+                //media = new Media(listOfFiles[i].toURI().toString());
                 // mediaPlayer = new MediaPlayer(media);
 
                 // songLabel.setText(listOfFiles[i].getName());
                 // mediaPlayer.play();
+                songNumber = i;
             }
         });
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -361,16 +362,20 @@ public class FXMLController implements Initializable {
     }
 
     public void previousMedia(ActionEvent actionEvent) {
+        if (isPlaying) mediaPlayer.stop();
+        isPlaying = false;
         if (progressBar.getValue() < 5) {
             if (songNumber > 0) {
                 songNumber--;
-                mediaPlayer.stop();
-
-                media = new Media(curSongs.get(songNumber).toURI().toString());
-                mediaPlayer = new MediaPlayer(media);
-                songLabel.setText(curSongs.get(songNumber).getName());
+            } else {
+                songNumber = curSongs.size() - 2;
             }
+            media = new Media(curSongs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(curSongs.get(songNumber).getName());
+
             mediaPlayer.play();
+            isPlaying = true;
             progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
