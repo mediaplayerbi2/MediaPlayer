@@ -86,11 +86,8 @@ public class FXMLController implements Initializable {
             songNumber = files.size();
             mediaPlayer.play();
         }
-        // if (acceptedExtensions.contains(extension)) {
-        //     Media media = new Media(file.toURI().toString());
-        //     audioMediaView.setMediaPlayer(new MediaPlayer(media));
-        // }
     }
+
     private Media media;
     private MediaPlayer mediaPlayer;
     private File[] files;
@@ -101,6 +98,10 @@ public class FXMLController implements Initializable {
     private TimerTask task;
     private boolean running;
 
+
+    public void addMediaToPlaylist() {
+
+    }
 
     public void playMedia(ActionEvent actionEvent) {
         mediaPlayer.stop();
