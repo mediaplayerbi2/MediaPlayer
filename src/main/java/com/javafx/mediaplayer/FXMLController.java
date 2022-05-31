@@ -147,6 +147,51 @@ public class FXMLController implements Initializable {
         }
     }
 
+    private void refreshProgressBar() {
+        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        mediaPlayer.setOnReady(new Runnable() {
+            @Override
+            public void run() {
+                javafx.util.Duration total = media.getDuration();
+                progressBar.setMax(total.toSeconds());
+            }
+        });
+
+        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
+            @Override
+            public void changed(ObservableValue<? extends javafx.util.Duration> observable,
+                                javafx.util.Duration oldValue, javafx.util.Duration newValue) {
+                progressBar.setValue(newValue.toSeconds());
+            }
+        });
+
+        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+
+        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
+            }
+        });
+    }
 
     public void addMediaToPlaylist() {
 
@@ -160,49 +205,7 @@ public class FXMLController implements Initializable {
         songLabel.setText(curSongs.get(songNumber).getName());
         mediaPlayer.play();
         isPlaying = true;
-        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
-
-        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
-            @Override
-            public void changed(ObservableValue<? extends javafx.util.Duration> observable,
-                                javafx.util.Duration oldValue, javafx.util.Duration newValue) {
-                progressBar.setValue(newValue.toSeconds());
-            }
-        });
-        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
-
-        mediaPlayer.setOnReady(new Runnable() {
-            @Override
-            public void run() {
-                javafx.util.Duration total = media.getDuration();
-                progressBar.setMax(total.toSeconds());
-            }
-        });
-
-        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
-
-        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
-
+        refreshProgressBar();
     }
 
     public void nextMedia(ActionEvent actionEvent) {
@@ -215,52 +218,10 @@ public class FXMLController implements Initializable {
         }
         media = new Media(curSongs.get(songNumber).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
-        songLabel.setText(curSongs.get(songNumber).getName());
-
         mediaPlayer.play();
         isPlaying = true;
-        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
-
-        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
-
-        mediaPlayer.setOnReady(new Runnable() {
-            @Override
-            public void run() {
-                javafx.util.Duration total = media.getDuration();
-                progressBar.setMax(total.toSeconds());
-            }
-        });
-        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
-            @Override
-            public void changed(ObservableValue<? extends javafx.util.Duration> observable,
-                                javafx.util.Duration oldValue, javafx.util.Duration newValue) {
-                progressBar.setValue(newValue.toSeconds());
-            }
-        });
-
-        progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
-
-        progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-            }
-        });
+        songLabel.setText(curSongs.get(songNumber).getName());
+        refreshProgressBar();
     }
 
 
@@ -317,10 +278,6 @@ public class FXMLController implements Initializable {
                 }
             }
         }
-        // media = new Media(songs.get(songNumber).toURI().toString());
-        // mediaPlayer = new MediaPlayer(media);
-
-        //songLabel.setText(songs.get(songNumber).getName());
         ObservableList<String> observableList = FXCollections.observableList(songNames);
         if (songs.length == 1) {
             songsListView.setPlaceholder(new Label("Nothing here"));
@@ -330,32 +287,21 @@ public class FXMLController implements Initializable {
         songsListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                // mediaPlayer.stop();
-                // File[] listOfFiles = new File[curSongs.size()];
-                // for (int i = 0; i < songs.length; i++) {
-                //     listOfFiles[i] = new File(curSongs.get(i).toString());
-                // }
-
                 String selectedSong = songsListView.getSelectionModel().getSelectedItem();
-                int i;
-                for (i = 0; i < curSongs.size() - 1; i++) {
-                    String[] temp = curSongs.get(i).toString().split("\\\\");
-                    if (temp[temp.length-1].equals(selectedSong)) {
+                for (int i = 0; i < curSongs.size() - 1; i++) {
+                    String temp = curSongs.get(i).getName();
+                    if (temp.equals(selectedSong)) {
+                        songNumber = i;
                         break;
                     }
                 }
-                //media = new Media(listOfFiles[i].toURI().toString());
-                // mediaPlayer = new MediaPlayer(media);
-
-                // songLabel.setText(listOfFiles[i].getName());
-                // mediaPlayer.play();
-                songNumber = i;
                 if (isPlaying) mediaPlayer.stop();
                 media = new Media(curSongs.get(songNumber).toURI().toString());
                 mediaPlayer = new MediaPlayer(media);
                 songLabel.setText(curSongs.get(songNumber).getName());
                 mediaPlayer.play();
                 isPlaying = true;
+                refreshProgressBar();
             }
         });
         volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -378,53 +324,10 @@ public class FXMLController implements Initializable {
             }
             media = new Media(curSongs.get(songNumber).toURI().toString());
             mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(curSongs.get(songNumber).getName());
-
             mediaPlayer.play();
+            songLabel.setText(curSongs.get(songNumber).getName());
             isPlaying = true;
-            progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-                }
-            });
-
-            progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-                }
-            });
-
-            mediaPlayer.setOnReady(new Runnable() {
-                @Override
-                public void run() {
-                    javafx.util.Duration total = media.getDuration();
-                    progressBar.setMax(total.toSeconds());
-                }
-            });
-
-            mediaPlayer.currentTimeProperty().addListener(new ChangeListener<javafx.util.Duration>() {
-                @Override
-                public void changed(ObservableValue<? extends javafx.util.Duration> observable,
-                                    javafx.util.Duration oldValue, javafx.util.Duration newValue) {
-                    progressBar.setValue(newValue.toSeconds());
-                }
-            });
-
-            progressBar.setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-                }
-            });
-
-            progressBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
-                }
-            });
+            refreshProgressBar();
         }
         else {
             progressBar.setValue(0);
