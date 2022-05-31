@@ -32,6 +32,8 @@ public class FXMLController implements Initializable {
     @FXML
     private Button addButton;
     @FXML
+    private Button previousButton;
+    @FXML
     private Label nameLabel;
     @FXML
     private Button nextButton;
