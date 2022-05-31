@@ -229,7 +229,7 @@ public class FXMLController implements Initializable {
         String[] songs;
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                boolean created = file.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -237,6 +237,7 @@ public class FXMLController implements Initializable {
             try {
                 FileWriter fw = new FileWriter(file.toString());
                 fw.write("");
+                fw.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -248,15 +249,11 @@ public class FXMLController implements Initializable {
         }
         curSongs = new ArrayList<File>();
         refreshCurrentSongs();
-        // directory = new File("src/music");
-        // files = directory.listFiles();
         List<String> songNames = new ArrayList<String>();
-        if (songs != null) {
-            for (String song: songs) {
-                String[] temp = song.split("\\\\");
-                if (temp.length > 1) {
-                    songNames.add(temp[temp.length - 1]);
-                }
+        for (String song: songs) {
+            String[] temp = song.split("\\\\");
+            if (temp.length > 1) {
+                songNames.add(temp[temp.length - 1]);
             }
         }
         ObservableList<String> observableList = FXCollections.observableList(songNames);
