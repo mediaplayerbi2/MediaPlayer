@@ -31,54 +31,38 @@ import java.net.URL;
 public class FXMLController implements Initializable {
     @FXML
     private Button addButton;
-
     @FXML
     private Label nameLabel;
-
     @FXML
     private Button nextButton;
-
     @FXML
     private Button pauseButton;
-
     @FXML
     private Button playButton;
-
     @FXML
     private Button playlistButton;
-
     @FXML
     private ListView<?> playlistsListView;
-
     @FXML
     private Button shareButton;
-
     @FXML
     private Button songButton;
-
     @FXML
     private Label songLabel;
     @FXML
     private Label timeLabel;
-
     @FXML
     private Slider progressBar;
-
     @FXML
     private ListView<String> songsListView;
-
     @FXML
     private Slider volumeSlider;
-
     @FXML
     private void handleDragOver(DragEvent event) {
         if (event.getDragboard().hasFiles()) {
             event.acceptTransferModes(TransferMode.ANY);
         }
     }
-
-    private ArrayList<File> curSongs;
-    private boolean isPlaying;
     @FXML
     private void handleDrop(DragEvent event) throws FileNotFoundException {
         List<File> files = event.getDragboard().getFiles();
@@ -123,7 +107,8 @@ public class FXMLController implements Initializable {
         songsListView.setItems(observableList);
         refreshCurrentSongs();
     }
-
+    private ArrayList<File> curSongs;
+    private boolean isPlaying;
     private Media media;
     private MediaPlayer mediaPlayer;
     private File[] files;
@@ -191,10 +176,6 @@ public class FXMLController implements Initializable {
                 mediaPlayer.seek(javafx.util.Duration.seconds(progressBar.getValue()));
             }
         });
-    }
-
-    public void addMediaToPlaylist() {
-
     }
 
     public void playMedia(ActionEvent actionEvent) {
