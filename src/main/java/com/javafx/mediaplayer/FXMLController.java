@@ -242,22 +242,16 @@ public class FXMLController implements Initializable {
                 throw new RuntimeException(e);
             }
         }
-        try {
-            songs = Files.readString(file.toPath()).split("\n");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         curSongs = new ArrayList<File>();
         refreshCurrentSongs();
         List<String> songNames = new ArrayList<String>();
-        for (String song: songs) {
-            String[] temp = song.split("\\\\");
-            if (temp.length > 1) {
-                songNames.add(temp[temp.length - 1]);
+        for (File song: curSongs) {
+            if (song.exists()) {
+                songNames.add(song.getName());
             }
         }
         ObservableList<String> observableList = FXCollections.observableList(songNames);
-        if (songs.length == 1) {
+        if (!curSongs.get(0).exists()) {
             songsListView.setPlaceholder(new Label("Nothing here"));
         } else {
             songsListView.setItems(observableList);
